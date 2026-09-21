@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-click-events-table.yaml
+      author: maxgot
+      changes:
+        - createTable:
+            tableName: click_events
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: short_code
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: original_url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: clicked_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_agent
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: correlation_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true

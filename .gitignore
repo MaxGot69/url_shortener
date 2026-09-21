@@ -1,0 +1,19 @@
+### Secrets ###
+.env
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+
+### Build ###
+target/
+build/
+out/
+
+### Maven wrapper ###
+.mvn/wrapper/maven-wrapper.jar
+
+### OS ###
+.DS_Store
