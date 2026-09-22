@@ -1,12 +1,16 @@
 package com.maxgot.shortener_service.controller;
 
+import com.maxgot.shortener_service.client.AnalyticsClient;
+import com.maxgot.shortener_service.dto.ClickStatsResponse;
 import com.maxgot.shortener_service.dto.CreateLinkRequest;
 import com.maxgot.shortener_service.dto.LinkResponse;
 import com.maxgot.shortener_service.entity.Link;
+import com.maxgot.shortener_service.service.LinkAnalyticsService;
 import com.maxgot.shortener_service.service.LinkService;
 import com.maxgot.shortener_service.service.RateLimitService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +20,17 @@ import java.net.URI;
 
 @RestController
 @Valid
+//@RequiredArgsConstructor
 public class LinkController {
     @Autowired
     private LinkService linkService;
     private RateLimitService rateLimitService;
+    private LinkAnalyticsService linkAnalyticsService;
 
-    public LinkController(LinkService linkService,  RateLimitService rateLimitService) {
+    public LinkController(LinkService linkService,  RateLimitService rateLimitService, LinkAnalyticsService linkAnalyticsService) {
         this.linkService = linkService;
         this.rateLimitService = rateLimitService;
+        this.linkAnalyticsService = linkAnalyticsService;
     }
 
 
@@ -66,5 +73,10 @@ public class LinkController {
     public ResponseEntity<Void> delete(@PathVariable String shortCode) {
         linkService.deleteLink(shortCode);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/api/links/{shortCode}/analytics")
+    public ClickStatsResponse getAnalytics(@PathVariable String shortCode) {
+        return linkAnalyticsService.getStats(shortCode);
     }
 }
