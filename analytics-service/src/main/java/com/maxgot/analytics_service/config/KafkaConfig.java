@@ -4,7 +4,6 @@ import com.maxgot.analytics_service.event.LinkClickedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,6 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Map;
 @Configuration
@@ -27,7 +25,12 @@ public class KafkaConfig {
 
     @Bean
     public JacksonJsonDeserializer<LinkClickedEvent> linkClickedEventDeserializer() {
-        return new JacksonJsonDeserializer<>(LinkClickedEvent.class);
+        JacksonJsonDeserializer<LinkClickedEvent> deserializer =
+                new JacksonJsonDeserializer<>(LinkClickedEvent.class);
+        // Producer sends __TypeId__ for shortener_service.LinkClickedEvent; ignore it and
+        // always map to analytics_service.LinkClickedEvent.
+        deserializer.setUseTypeHeaders(false);
+        return deserializer;
     }
 
     @Bean

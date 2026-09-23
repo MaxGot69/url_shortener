@@ -53,11 +53,28 @@ class AnalyticsServiceTest {
         verify(clickEventRepository, times(2)).save(any(ClickEvent.class));
     }
 
+    @Test
+    void save_withUnknownCorrelationId_generatesUuidAndSaves() {
+        LinkClickedEvent event = new LinkClickedEvent(
+                "abc123",
+                "https://example.com",
+                LocalDateTime.now().toString(),
+                "Mozilla/5.0",
+                "unknown"
+        );
+
+        analyticsService.save(event);
+
+        ArgumentCaptor<ClickEvent> captor = ArgumentCaptor.forClass(ClickEvent.class);
+        verify(clickEventRepository).save(captor.capture());
+        assertThat(captor.getValue().getCorrelationId()).isNotNull();
+    }
+
     private LinkClickedEvent buildEvent(String shortCode) {
         return new LinkClickedEvent(
                 shortCode,
                 "https://example.com",
-                LocalDateTime.now(),
+                LocalDateTime.now().toString(),
                 "Mozilla/5.0",
                 UUID.randomUUID().toString()
         );

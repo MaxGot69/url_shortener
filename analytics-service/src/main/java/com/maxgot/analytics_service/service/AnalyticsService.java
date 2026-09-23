@@ -21,11 +21,15 @@ public class AnalyticsService {
 
     @Transactional
     public void save(LinkClickedEvent event) {
+        Instant clickedAt = LocalDateTime.parse(event.clickedAt())
+                .toInstant(ZoneOffset.UTC);
+
+        UUID correlationId = parseOrGenerateUuid(event.correlationId());
         ClickEvent clickEvent = new ClickEvent(
                 event.shortCode(),
                 event.originalUrl(),
-                event.clickedAt().toInstant(ZoneOffset.UTC),
-                UUID.fromString(event.correlationId()),
+                clickedAt,
+                correlationId,
                 event.userAgent()
         );
         clickEventRepository.save(clickEvent);
@@ -50,5 +54,16 @@ public class AnalyticsService {
                 week
         );
         return response;
+    }
+
+    private UUID parseOrGenerateUuid(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return UUID.randomUUID();
+        }
+        try {
+            return UUID.fromString(raw);
+        } catch (IllegalArgumentException e) {
+            return UUID.randomUUID();
+        }
     }
 }

@@ -24,3 +24,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  logging:
+    level:
+      org.springframework.kafka: DEBUG
+      org.springframework.kafka.listener: DEBUG
+      org.springframework.kafka.support.serializer: TRACE
