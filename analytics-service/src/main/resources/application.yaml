@@ -24,8 +24,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-  logging:
-    level:
-      org.springframework.kafka: DEBUG
-      org.springframework.kafka.listener: DEBUG
-      org.springframework.kafka.support.serializer: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    org.springframework.kafka: INFO
+    org.springframework.kafka.listener: INFO
+    org.springframework.kafka.support.serializer: INFO
